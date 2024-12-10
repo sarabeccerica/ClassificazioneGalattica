@@ -20,7 +20,7 @@ z          : valore numerico del filtro infrarosso del sistema
              fotometrico
 run_ID     : numero del ciclo di scansioni, utilizzato per identificare
              una scansione specifica
-rerun_ID   : numero di rielaborazione, specifica come Ë stata processata
+rerun_ID   : numero di rielaborazione, specifica come √® stata processata
              l'immagine
 cam_col    : colonna della camera, utilizzata per identificare la
              linea di scansione all'interno del ciclo
@@ -43,23 +43,14 @@ a(1237660961327743232,135.6891066036,32.4946318397087,23.87882,22.2753,20.39501,
 :- ensure_loaded(star_classification).
 
 /*
-Il campo "obj_ID" Ë univoco, quindi inutile per l'analisi e verr‡
+Il campo "obj_ID" √® univoco, quindi inutile per l'analisi e verr√†
 eliminato.
 
 I campi "alpha", "delta", "MJD", "plate", "cam_col", "field_ID",
 "spec_obj_ID" e "fiber_ID" non sono utili al fine della classificazione.
 
 Il campo "rerun_ID" contiene un solo valore per tutte le righe, quindi
-verr‡ eliminato.
-
-Il campo "redshift" ha valori con la virgola ed Ë troppo specifico.
-Per questo motivo verranno definite tre classi:
-*   : (< 0,01)          per Stelle
-**  : (>= 0,01 e < 0,5) per Quasar
-*** : (>= 0,5)          per Galassie
-
-I valori dei campi "u","g","r","i","z" verranno suddivisi in 5 fasce
-per semplificazione.
+verr√† eliminato.
 
 */
 
@@ -67,9 +58,13 @@ per semplificazione.
 start :-
     tell('star_classification_database.pl'),
     a(_,_,_,u,g,r,i,z,_,_,_,_,_,class,redshift,_,_,_),
-    write('aa('), write(
-
-
-
-
-
+    write('aa('), write(u),
+    write(','), write(g),
+    write(','), write(r),
+    write(','), write(i),
+    write(','), write(z),
+    write(','), write(class),
+    write(','), write(redshift),
+    writeln(').'),
+    fail.
+start :- told.
