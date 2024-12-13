@@ -1,8 +1,14 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split # type: ignore
 
 # Carica il dataset
 df = pd.read_csv('star_classification.csv')
+
+# Sostituisce -9999 con NaN (una riga contiene valori -9999)
+df.replace(-9999, pd.NA, inplace=True)
+
+# Rimuove le righe che contiene NaN
+df.dropna(inplace=True)
 
 # Seleziona le colonne desiderate
 columns = ['class', 'u', 'g', 'r', 'i', 'z', 'redshift']
@@ -65,7 +71,7 @@ def create_prolog_file_with_bins(data, filename,columns):
             class_label = row['class']
 
             # Scrivi nel file Prolog con il formato richiesto
-            if filename == 'training_data.pl':
+            if filename == 'training_set.pl':
                 f.write(
                     f'e({class_label}, u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}).\n')
             else:
