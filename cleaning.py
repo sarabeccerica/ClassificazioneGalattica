@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sklearn.model_selection import train_test_split # type: ignore
 
@@ -56,8 +57,14 @@ def assign_bin(value, bins):
 
 
 # Funzione per creare il file Prolog con le fasce
-def create_prolog_file_with_bins(data, filename,columns):
-    with open(filename, 'w') as f:
+def create_prolog_file_with_bins(data, filename, folder, columns):
+
+    # Assicurarsi che la cartella esista
+    os.makedirs(folder, exist_ok=True)
+    
+    filepath = os.path.join(folder, filename)
+
+    with open(filepath, 'w') as f:
         for index, row in data.iterrows():
             # Assegna le fasce per ogni colonna
             u_bin = assign_bin(row['u'], bins_u)
@@ -74,7 +81,7 @@ def create_prolog_file_with_bins(data, filename,columns):
             if filename == 'training_set.pl':
                 f.write(
                     f'e({class_label}, u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}).\n')
-            else:
+            elif filename == 'test_set.pl':
                 f.write(
                     f's({class_label}, u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}).\n')
 
@@ -82,13 +89,14 @@ def create_prolog_file_with_bins(data, filename,columns):
             if filename == 'attributi.pl':
                 if column == 'class':
                     f.write(f'a({column},QSO,STAR,GALAXY).\n')
-                if column == 'u' or column == 'g' or column == 'r' or column == 'i' or column == 'z':
+                elif column == 'u' or column == 'g' or column == 'r' or column == 'i' or column == 'z':
                     f.write(f'a({column}, {column}_bin1, {column}_bin2, {column}_bin3, {column}_bin4, {column}_bin5, {column}_bin6,'
                             f'{column}_bin7, {column}_bin8,{column}_bin9, {column}_bin10).\n')
-                if column == 'redshift':
+                elif column == 'redshift':
                     f.write(f'a({column}_bin1,{column}_bin2, {column}_bin3).\n')
 
+folder_name = "Apprendimento_QSG"
 
-create_prolog_file_with_bins(train_data, 'training_set.pl',columns)
-create_prolog_file_with_bins(test_data, 'test_set.pl',columns)
-create_prolog_file_with_bins(test_data, 'attributi.pl',columns)
+create_prolog_file_with_bins(train_data, 'training_set.pl', folder_name, columns)
+create_prolog_file_with_bins(test_data, 'test_set.pl', folder_name, columns)
+create_prolog_file_with_bins(test_data, 'attributi.pl', folder_name, columns)
