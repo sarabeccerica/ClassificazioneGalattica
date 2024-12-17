@@ -87,9 +87,7 @@ def create_prolog_file_with_bins(data, filename, folder, columns):
 
         for column in columns:
             if filename == 'attributi.pl':
-                if column == 'class':
-                    f.write(f'a({column},QSO,STAR,GALAXY).\n')
-                elif column == 'u' or column == 'g' or column == 'r' or column == 'i' or column == 'z':
+                if column == 'u' or column == 'g' or column == 'r' or column == 'i' or column == 'z':
                     f.write(f'a({column}, {column}_bin1, {column}_bin2, {column}_bin3, {column}_bin4, {column}_bin5, {column}_bin6,'
                             f'{column}_bin7, {column}_bin8,{column}_bin9, {column}_bin10).\n')
                 elif column == 'redshift':

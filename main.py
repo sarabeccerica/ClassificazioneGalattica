@@ -7,23 +7,25 @@ import numpy as np
 import pandas as pd
 import os
 
-FOLDER_PATH = "C:\Users\matte\OneDrive\Desktop\Università 2\1 - Intelligenza Artificiale (Dragoni)\Stellar Classification\Classificazione Galattica"
+FOLDER_PATH = "C:/Users/matte/OneDrive/Desktop/Università 2/1 - Intelligenza Artificiale (Dragoni)/Stellar Classification/Classificazione Galattica/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
 
 def switchPath(filename):
-    with open(os.getcwd() + '/Apprendimento_QSG/' + filename, 'r') as file, open(os.getcwd() + '/Apprendimento_QGS/' + filename + '.tmp', 'w') as file_temp:
+    input_path = FOLDER_PATH + "Apprendimento_QSG/" + filename
+    temp_path = FOLDER_PATH + "Apprendimento_QSG/" + filename + ".tmp"
+
+    # Apertura dei file di input e temporaneo
+    with open(input_path, 'r') as file, open(temp_path, 'w') as file_temp:
         # Itera ogni riga del file
         for line in file:
-            # Controlla se la riga inizia con 'file_output' e se necessario la sostituisce
+            # Controlla se la riga inizia con 'file_output' e, se necessario, la sostituisce
             if line.startswith('file_output'):
-                line = "file_output('"+os.getcwd() + "/Apprendimento_QSG/albero.pl').\n"
-            # Scrive la riga nel file temporaneo
+                line = f"file_output('{FOLDER_PATH}/Apprendimento_QSG/albero.pl').\n"
             file_temp.write(line)
 
-    # Rimuove il file originale
-    os.remove(os.getcwd()+'/Apprendimento_QSG/'+filename)
-    # Rinomina
-    os.rename(os.getcwd()+'/Apprendimento_QSG/'+filename + '.tmp', os.getcwd()+'/Apprendimento_QSG/'+filename)
+    # Rimuove il file originale e rinomina il file temporaneo
+    os.remove(input_path)
+    os.rename(temp_path, input_path)
 
 def on_combobox_change():
     selected = combobox.get()
@@ -60,61 +62,46 @@ def interroga():
     switchPath('tree_induction_entropy.pl')
     switchPath('tree_induction_gini.pl')
     prolog = Prolog()
-    #Determino i valori inseriti dall'utente
+   
+        # Determina i valori inseriti dall'utente
     values = [entry.get() for entry in entry_widgets]
-    values[5] = str(float(values[5]) / 100 )#Normalizzo la percentuale
-    #Carico il file da consultare
-    prolog.consult(FOLDER_PATH+"Apprendimento_QSG/"+INDUCTION_FILE)
-    #Costruisco la query ricavandomi il tier
+
+    safe_folder_path = FOLDER_PATH.replace("\\", "/").encode('ascii', 'ignore').decode()
+    prolog_file_path = os.path.join(safe_folder_path, "Apprendimento_QSG", INDUCTION_FILE)
+
+    # Carica il file di induzione selezionato
+    prolog.consult(prolog_file_path)
+
+    # Costruisco la query direttamente usando i valori dell'utente
     query = "["
-    for chiave, user_input in zip(attributi_dict.keys(), values):
-        if len(user_input) == 0: user_input = 0
-        tier_result = get_tier_for_value(chiave, attributi_dict[chiave], float(user_input))
-        print(f"Il tier corrispondente per "+chiave+" è: "+tier_result)
-        query = query+chiave+"="+tier_result+","
-    query = query[:-1]
-    query=query+"]"
-    print(query)
+    for chiave, user_input in zip(["u", "g", "r", "i", "z", "redshift"], values):
+        if len(user_input) == 0:  # Gestione di input vuoto
+            user_input = "0"  # Predefinisci un valore per sicurezza
+        query += f"{chiave}={user_input},"  # Appendo l'attributo e il valore
+    query = query.rstrip(",") + "]"  # Rimuovo la virgola finale e chiudo
 
-    print("Inizio l'apprendimento dei quasar")
-    tempo_inizio=time.time()
-    answer = prolog.query("lancia_apprendi(QSO).")
-    print(format_result(answer))
-    tempo_fine=time.time()
-    tempo_totale = tempo_fine - tempo_inizio
-    print(f"Tempo totale di esecuzione: {tempo_totale} secondi")
+    print(f"Query costruita: {query}")
 
-    print("Inizio l'apprendimento delle stelle")
-    tempo_inizio = time.time()
-    answer = prolog.query("lancia_apprendi(STAR).")
-    print(format_result(answer))
-    tempo_fine = time.time()
-    tempo_totale = tempo_fine - tempo_inizio
-    print(f"Tempo totale di esecuzione: {tempo_totale} secondi")
+    # Fasi di apprendimento
+    categorie = ["QSO", "STAR", "GALAXY"]
+    for cat in categorie:
+        print(f"Inizio l'apprendimento per la classe {cat}")
+        tempo_inizio = time.time()
+        answer = prolog.query(f"lancia_apprendi({cat}).")
+        print(format_result(answer))
+        tempo_fine = time.time()
+        print(f"Tempo totale per {cat}: {tempo_fine - tempo_inizio:.2f} secondi")
 
-    print("Inizio l'apprendimento delle galassie")
-    tempo_inizio = time.time()
-    answer = prolog.query("lancia_apprendi(GALAXY).")
-    print(format_result(answer))
-    tempo_fine = time.time()
-    tempo_totale = tempo_fine - tempo_inizio
-    print(f"Tempo totale di esecuzione: {tempo_totale} secondi")
-
-    print("Interrogo il programma")
+    print("Classificazione dell'oggetto...")
     tempo_inizio = time.time()
     answer = prolog.query(("classifica_oggetto(" + query + ", Classe)."))
     print(format_result(answer))
     tempo_fine = time.time()
-    tempo_totale = tempo_fine - tempo_inizio
-    print(f"Tempo totale di esecuzione: {tempo_totale} secondi")
-
-
-
-
+    print(f"Tempo totale di esecuzione: {tempo_fine - tempo_inizio:.2f} secondi")
 
 root = tk.Tk()
 root.title("Apprendimento intelligente QSG")
-labels = ["Classe", "U", "G", "R", "I", "Z", "Redshift"]
+labels = ["U", "G", "R", "I", "Z", "Redshift"]
 
 entry_widgets = []
 

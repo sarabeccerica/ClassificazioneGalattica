@@ -16,7 +16,7 @@
 % visualizzare le prestazioni dell'albero indotto.
 
 % Cambiare percorso con quello della propria workspace
-file_output('/home/giulio/Documents/Intelligenza_artificiale/Apprendimento_NBA/albero.pl').
+file_output('C:/Users/matte/OneDrive/Desktop/Università 2/1 - Intelligenza Artificiale (Dragoni)/Stellar Classification/Classificazione Galattica//Apprendimento_QSG/albero.pl').
 
 
 % Predicato per lanciare l'apprendimento
@@ -286,8 +286,8 @@ stampa_matrice_di_confusione :-
         P is VP / (VP + FN), % Precisione
 	write('Test effettuati :'),  writeln(N),
 	write('Test non classificati :'),  writeln(NC),
-	write('Veri positivi  '), write(VN), write('   Falsi negativi '), writeln(FP),
-	write('Falsi positivi '), write(FN), write('   Veri positivi  '), writeln(VP),
+	write('Veri negativi  '), write(VN), write('   Falsi positivi '), writeln(FP),
+	write('Falsi negativi '), write(FN), write('   Veri positivi  '), writeln(VP),
 	write('Accuratezza: '), writeln(A),
 	write('Errore: '), writeln(E),
         write('Precisione: '), writeln(P).
