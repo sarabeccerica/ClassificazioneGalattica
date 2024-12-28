@@ -4,8 +4,8 @@
 :- op(300, xfx, <==).
 
 % Programma Prolog di apprendimento automatico per la classificazione di
-% infortuni dei giocatori in un campionato di basket.
-% Con il predicato lancia_apprendi(Classe) (Classe = sano/infortunato),
+% stelle, galassie e quasar attraverso la misura delle frequenze.
+% Con il predicato lancia_apprendi(Classe) (Classe = GALAXY, QSO, STAR),
 % viene lanciato l'apprendimento relativo alla classe specificata.
 % Una volta concluso l'apprendimento, con il predicato
 % classifica_oggetto e' possibile far classificare al programma
@@ -16,7 +16,7 @@
 % visualizzare le prestazioni dell'albero indotto.
 
 % Cambiare percorso con quello della propria workspace
-file_output('C:/Users/sarab/PycharmProjects/ClassificazioneGalattica/Apprendimento_QSG/albero.pl').
+file_output('C:/Users/matte/OneDrive/Desktop/ClassificazioneGalattica/Apprendimento_QSG/albero.pl').
 
 
 % Predicato per lanciare l'apprendimento
