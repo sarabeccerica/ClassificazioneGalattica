@@ -16,7 +16,7 @@
 % visualizzare le prestazioni dell'albero indotto.
 
 % Cambiare percorso con quello della propria workspace
-file_output('C:/Users/matte/OneDrive/Desktop/Università 2/1 - Intelligenza Artificiale (Dragoni)/Stellar Classification/Classificazione Galattica//Apprendimento_QSG/albero.pl').
+file_output('C:/Users/sarab/PycharmProjects/ClassificazioneGalattica/Apprendimento_QSG/albero.pl').
 
 
 % Predicato per lanciare l'apprendimento

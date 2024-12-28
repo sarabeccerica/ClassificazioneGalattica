@@ -16,7 +16,7 @@
 % visualizzare le prestazioni dell'albero indotto.
 
 % Cambiare percorso con quello della propria workspace
-file_output('C:/Users/matte/OneDrive/Desktop/Università 2/1 - Intelligenza Artificiale (Dragoni)/Stellar Classification/Classificazione Galattica//Apprendimento_QSG/albero.pl').
+file_output('C:/Users/sarab/PycharmProjects/ClassificazioneGalattica/Apprendimento_QSG/albero.pl').
 
 
 % Predicato per lanciare l'apprendimento
@@ -297,40 +297,40 @@ stampa_matrice_di_confusione :-
 valuta(_,[],VN,VN,VP,VP,FN,FN,FP,FP,NC,NC).            % testset vuoto -> valutazioni finali
 
 valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), |,                 % prevede correttamente Quasar
+    classifica(Oggetto,QSO,Albero), !,                 % prevede correttamente Quasar
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
 valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), |,                 % prevede erroneamente Quasar (con STAR)
+    classifica(Oggetto,QSO,Albero), !,                 % prevede erroneamente Quasar (con STAR)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
  valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), |,                 % prevede erroneamente Quasar (con GALAXY)
+    classifica(Oggetto,QSO,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
 
 valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), |,                 % prevede correttamente Star
+    classifica(Oggetto,STAR,Albero), !,                 % prevede correttamente Star
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
 valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), |,                 % prevede erroneamente Star (con QSO)
+    classifica(Oggetto,STAR,Albero), !,                 % prevede erroneamente Star (con QSO)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
  valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), |,                 % prevede erroneamente Star (con GALAXY)
+    classifica(Oggetto,STAR,Albero), !,                 % prevede erroneamente Star (con GALAXY)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
 
 valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GAALXY,Albero), |,                 % prevede correttamente Galaxy
+    classifica(Oggetto,GAALXY,Albero), !,                 % prevede correttamente Galaxy
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
 valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GALAXY,Albero), |,                 % prevede erroneamente Galaxy (con QSO)
+    classifica(Oggetto,GALAXY,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
  valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GALAXY,Albero), |,                 % prevede erroneamente Galaxy (con STAR)
+    classifica(Oggetto,GALAXY,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).

@@ -7,30 +7,34 @@ import numpy as np
 import pandas as pd
 import os
 
-FOLDER_PATH = "C:/Users/matte/OneDrive/Desktop/Università 2/1 - Intelligenza Artificiale (Dragoni)/Stellar Classification/Classificazione Galattica/"
+FOLDER_PATH = "C:/Users/sarab/PycharmProjects/ClassificazioneGalattica/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
 
 def switchPath(filename):
     input_path = FOLDER_PATH + "Apprendimento_QSG/" + filename
     temp_path = FOLDER_PATH + "Apprendimento_QSG/" + filename + ".tmp"
-
+    print("Input Path:", input_path)
+    print("Temp Path:", temp_path)
     # Apertura dei file di input e temporaneo
     with open(input_path, 'r') as file, open(temp_path, 'w') as file_temp:
         # Itera ogni riga del file
         for line in file:
             # Controlla se la riga inizia con 'file_output' e, se necessario, la sostituisce
             if line.startswith('file_output'):
-                line = f"file_output('{FOLDER_PATH}/Apprendimento_QSG/albero.pl').\n"
+                line = f"file_output('{FOLDER_PATH}Apprendimento_QSG/albero.pl').\n"
             file_temp.write(line)
 
     # Rimuove il file originale e rinomina il file temporaneo
     os.remove(input_path)
     os.rename(temp_path, input_path)
 
-def on_combobox_change():
+def on_combobox_change(event):
+    global INDUCTION_FILE
     selected = combobox.get()
-    if selected == "Gini": INDUCTION_FILE = "tree_induction_gini.pl"
-    else: INDUCTION_FILE = "tree_induction_entropy.pl"
+    if selected == "Gini":
+        INDUCTION_FILE = "tree_induction_gini.pl"
+    else:
+        INDUCTION_FILE = "tree_induction_entropy.pl"
     print(f"Hai selezionato: {INDUCTION_FILE}")
 
 def format_value(value):
@@ -65,12 +69,9 @@ def interroga():
    
         # Determina i valori inseriti dall'utente
     values = [entry.get() for entry in entry_widgets]
-
-    safe_folder_path = FOLDER_PATH.replace("\\", "/").encode('ascii', 'ignore').decode()
-    prolog_file_path = os.path.join(safe_folder_path, "Apprendimento_QSG", INDUCTION_FILE)
-
-    # Carica il file di induzione selezionato
-    prolog.consult(prolog_file_path)
+    path = FOLDER_PATH + 'Apprendimento_QSG/'+ INDUCTION_FILE
+    query1 = f"consult('{path}')"
+    prolog.query(query1)
 
     # Costruisco la query direttamente usando i valori dell'utente
     query = "["
