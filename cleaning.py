@@ -87,10 +87,10 @@ def create_prolog_file_with_bins(data, filename, folder, columns):
             # Scrivi nel file Prolog con il formato richiesto
             if filename == 'training_set.pl':
                 f.write(
-                    f'e({class_label}, u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}).\n')
+                    f'e({class_label},[ u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}]).\n')
             elif filename == 'test_set.pl':
                 f.write(
-                    f's({class_label}, u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}).\n')
+                    f's({class_label},[ u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}]).\n')
 
         for column in columns:
             if filename == 'attributi.pl':
