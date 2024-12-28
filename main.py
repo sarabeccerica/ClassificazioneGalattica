@@ -6,6 +6,13 @@ import time
 import numpy as np
 import pandas as pd
 import os
+from cleaning import assign_bin
+from cleaning import bins_u
+from cleaning import bins_g
+from cleaning import bins_r
+from cleaning import bins_i
+from cleaning import bins_z
+from cleaning import bins_redshift
 
 FOLDER_PATH = "C:/Users/matte/OneDrive/Desktop/ClassificazioneGalattica/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
@@ -70,16 +77,32 @@ def interroga():
     # Determina i valori inseriti dall'utente
     values = [entry.get() for entry in entry_widgets]
     path = FOLDER_PATH + 'Apprendimento_QSG/'+ INDUCTION_FILE
-    query1 = f"consult('{path}')"
-    print(f"Consulting Prolog file: {query1}")
-    prolog.query(query1)
+    query_consult = f"consult('{path}')"
+    print(f"Consulting Prolog file: {query_consult}")
+    prolog.query(query_consult)
 
     # Costruisco la query direttamente usando i valori dell'utente
     query = "["
-    for chiave, user_input in zip(["u", "g", "r", "i", "z", "redshift"], values):
+    for chiave, user_input in zip(attributi_dict.keys(), values):
         if len(user_input) == 0:  # Gestione di input vuoto
             user_input = "0"  # Predefinisci un valore per sicurezza
-        query += f"{chiave}={user_input},"  # Appendo l'attributo e il valore
+
+        # Determina il tier corrispondente per l'attributo
+        if chiave == "u":
+            bin = assign_bin(float(user_input), bins_u)
+        elif chiave == "g":
+            bin = assign_bin(float(user_input), bins_g)
+        elif chiave == "r":
+            bin = assign_bin(float(user_input), bins_r)
+        elif chiave == "i":
+            bin = assign_bin(float(user_input), bins_i)
+        elif chiave == "z":
+            bin = assign_bin(float(user_input), bins_z)
+        elif chiave == "redshift":
+            bin = assign_bin(float(user_input), bins_redshift)
+
+
+        query += f"{chiave}=bin{bin},"  # Appendo l'attributo e il valore
     query = query.rstrip(",") + "]"  # Rimuovo la virgola finale e chiudo
 
     print(f"Query costruita: {query}")
@@ -106,6 +129,15 @@ root.title("Apprendimento intelligente QSG")
 labels = ["U", "G", "R", "I", "Z", "Redshift"]
 
 entry_widgets = []
+
+attributi_dict = {
+    'u': 10,
+    'g': 10,
+    'r': 10,
+    'i': 10,
+    'z': 10,
+    'redshift': 3
+}
 
 for i, label_text in enumerate(labels):
     label = tk.Label(root, text=label_text, font=("Arial", 12))

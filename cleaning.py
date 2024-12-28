@@ -86,19 +86,18 @@ def create_prolog_file_with_bins(data, filename, folder, columns):
 
             # Scrivi nel file Prolog con il formato richiesto
             if filename == 'training_set.pl':
-                f.write(
-                    f'e({class_label},[ u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}]).\n')
+                f.write(        
+                    f'e({class_label},[u=bin{u_bin}, g=bin{g_bin}, r=bin{r_bin}, i=bin{i_bin}, z=bin{z_bin}, redshift=bin{redshift_bin}]).\n')
             elif filename == 'test_set.pl':
                 f.write(
-                    f's({class_label},[ u_bin{u_bin}, g_bin{g_bin}, r_bin{r_bin}, i_bin{i_bin}, z_bin{z_bin}, redshift_bin{redshift_bin}]).\n')
+                    f's({class_label},[u=bin{u_bin}, g=bin{g_bin}, r=bin{r_bin}, i=bin{i_bin}, z=bin{z_bin}, redshift=bin{redshift_bin}]).\n')
 
         for column in columns:
             if filename == 'attributi.pl':
                 if column == 'u' or column == 'g' or column == 'r' or column == 'i' or column == 'z':
-                    f.write(f'a({column}, [{column}_bin1, {column}_bin2, {column}_bin3, {column}_bin4, {column}_bin5, {column}_bin6,'
-                            f'{column}_bin7, {column}_bin8,{column}_bin9, {column}_bin10]).\n')
+                    f.write(f'a({column}, [bin1, bin2, bin3, bin4, bin5, bin6, bin7, bin8, bin9, bin10]).\n')
                 elif column == 'redshift':
-                    f.write(f'a({column},[{column}_bin1,{column}_bin2, {column}_bin3]).\n')
+                    f.write(f'a({column}, [bin1, bin2, bin3]).\n')
 
 folder_name = "Apprendimento_QSG"
 
