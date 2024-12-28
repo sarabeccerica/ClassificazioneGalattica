@@ -55,6 +55,13 @@ def assign_bin(value, bins):
             return f"{i + 1}"  # Etichetta della fascia (1-based index)
     return "Out of range"  # Se il valore non rientra in nessuna fascia
 
+def asign_class(value):
+    if value == "QSO":
+        return "qso"
+    elif value == "STAR":
+        return "star"
+    elif value == "GALAXY":
+        return "galaxy"
 
 # Funzione per creare il file Prolog con le fasce
 def create_prolog_file_with_bins(data, filename, folder, columns):
@@ -75,7 +82,7 @@ def create_prolog_file_with_bins(data, filename, folder, columns):
             redshift_bin = assign_bin(row['redshift'], bins_redshift)
 
             # Classe dell'oggetto
-            class_label = row['class']
+            class_label = asign_class(row['class'])
 
             # Scrivi nel file Prolog con il formato richiesto
             if filename == 'training_set.pl':
@@ -88,10 +95,10 @@ def create_prolog_file_with_bins(data, filename, folder, columns):
         for column in columns:
             if filename == 'attributi.pl':
                 if column == 'u' or column == 'g' or column == 'r' or column == 'i' or column == 'z':
-                    f.write(f'a({column}, {column}_bin1, {column}_bin2, {column}_bin3, {column}_bin4, {column}_bin5, {column}_bin6,'
-                            f'{column}_bin7, {column}_bin8,{column}_bin9, {column}_bin10).\n')
+                    f.write(f'a({column}, [{column}_bin1, {column}_bin2, {column}_bin3, {column}_bin4, {column}_bin5, {column}_bin6,'
+                            f'{column}_bin7, {column}_bin8,{column}_bin9, {column}_bin10]).\n')
                 elif column == 'redshift':
-                    f.write(f'a({column}_bin1,{column}_bin2, {column}_bin3).\n')
+                    f.write(f'a({column},[{column}_bin1,{column}_bin2, {column}_bin3]).\n')
 
 folder_name = "Apprendimento_QSG"
 
