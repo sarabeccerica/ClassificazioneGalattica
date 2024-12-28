@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import os
 
-FOLDER_PATH = "C:/Users/sarab/PycharmProjects/ClassificazioneGalattica/"
+FOLDER_PATH = "C:/Users/matte/OneDrive/Desktop/ClassificazioneGalattica/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
 
 def switchPath(filename):
@@ -67,10 +67,11 @@ def interroga():
     switchPath('tree_induction_gini.pl')
     prolog = Prolog()
    
-        # Determina i valori inseriti dall'utente
+    # Determina i valori inseriti dall'utente
     values = [entry.get() for entry in entry_widgets]
     path = FOLDER_PATH + 'Apprendimento_QSG/'+ INDUCTION_FILE
     query1 = f"consult('{path}')"
+    print(f"Consulting Prolog file: {query1}")
     prolog.query(query1)
 
     # Costruisco la query direttamente usando i valori dell'utente
@@ -84,7 +85,7 @@ def interroga():
     print(f"Query costruita: {query}")
 
     # Fasi di apprendimento
-    categorie = ["QSO", "STAR", "GALAXY"]
+    categorie = ["qso", "star", "galaxy"]
     for cat in categorie:
         print(f"Inizio l'apprendimento per la classe {cat}")
         tempo_inizio = time.time()

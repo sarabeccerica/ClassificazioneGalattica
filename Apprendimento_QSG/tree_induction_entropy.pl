@@ -4,8 +4,8 @@
 :- op(300, xfx, <==).
 
 % Programma Prolog di apprendimento automatico per la classificazione di
-% infortuni dei giocatori in un campionato di basket.
-% Con il predicato lancia_apprendi(Classe) (Classe = sano/infortunato),
+% stelle, galassie e quasar attraverso la misura delle frequenze.
+% Con il predicato lancia_apprendi(Classe) (Classe = GALAXY, QSO, STAR),
 % viene lanciato l'apprendimento relativo alla classe specificata.
 % Una volta concluso l'apprendimento, con il predicato
 % classifica_oggetto e' possibile far classificare al programma
@@ -16,7 +16,7 @@
 % visualizzare le prestazioni dell'albero indotto.
 
 % Cambiare percorso con quello della propria workspace
-file_output('C:/Users/sarab/PycharmProjects/ClassificazioneGalattica/Apprendimento_QSG/albero.pl').
+file_output('C:/Users/matte/OneDrive/Desktop/ClassificazioneGalattica/Apprendimento_QSG/albero.pl').
 
 
 % Predicato per lanciare l'apprendimento
@@ -296,41 +296,41 @@ stampa_matrice_di_confusione :-
 
 valuta(_,[],VN,VN,VP,VP,FN,FN,FP,FP,NC,NC).            % testset vuoto -> valutazioni finali
 
-valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), !,                 % prevede correttamente Quasar
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
-valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), !,                 % prevede erroneamente Quasar (con STAR)
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede correttamente Quasar
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
- valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Quasar (con STAR)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
-
-valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), !,                 % prevede correttamente Star
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
-valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), !,                 % prevede erroneamente Star (con QSO)
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
- valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), !,                 % prevede erroneamente Star (con GALAXY)
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
 
-valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GAALXY,Albero), !,                 % prevede correttamente Galaxy
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
-valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GALAXY,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede correttamente Star
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
- valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GALAXY,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con GALAXY)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+
+valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede correttamente Galaxy
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
