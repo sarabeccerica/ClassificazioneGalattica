@@ -296,41 +296,41 @@ stampa_matrice_di_confusione :-
 
 valuta(_,[],VN,VN,VP,VP,FN,FN,FP,FP,NC,NC).            % testset vuoto -> valutazioni finali
 
-valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), !,                 % prevede correttamente Quasar
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
-valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), !,                 % prevede erroneamente Quasar (con STAR)
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede correttamente Quasar
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
- valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,QSO,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Quasar (con STAR)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
-
-valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), !,                 % prevede correttamente Star
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
-valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), !,                 % prevede erroneamente Star (con QSO)
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
- valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,STAR,Albero), !,                 % prevede erroneamente Star (con GALAXY)
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
 
-valuta(Albero,[GALAXY/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GAALXY,Albero), !,                 % prevede correttamente Galaxy
-    VNA1 is VNA + 1,
-	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA). 
-valuta(Albero,[QSO/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GALAXY,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede correttamente Star
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
- valuta(Albero,[STAR/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
-    classifica(Oggetto,GALAXY,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con GALAXY)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+
+valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede correttamente Galaxy
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
     VNA1 is VNA + 1,
 	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
