@@ -4,6 +4,7 @@ from tkinter import ttk
 import tkinter as tk
 import time
 import numpy as np
+
 import pandas as pd
 import os
 from cleaning import assign_bin
@@ -14,7 +15,6 @@ from cleaning import bins_i
 from cleaning import bins_z
 from cleaning import bins_redshift
 
-FOLDER_PATH = "/Apprendimento_QSG/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
 
 def on_combobox_change(event):
@@ -94,7 +94,7 @@ def interroga():
 
     print("Classificazione dell'oggetto...")
     tempo_inizio = time.time()
-    answer = prolog.query(("classifica_oggetto(" + query + ", Classe)."))
+    answer = prolog.query(f"classifica_oggetto({query}, Classe).")
     print(format_result(answer))
     tempo_fine = time.time()
     print(f"Tempo totale di esecuzione: {tempo_fine - tempo_inizio:.2f} secondi")
@@ -126,7 +126,7 @@ button.grid(row=len(labels), column=1, pady=10)
 
 label=tk.Label(root, text="Metodo di induzione:", font=("Arial",12))
 label.grid(padx=5, pady=5, sticky="w")
-combobox = ttk.Combobox(root, values=["Entropia", "Gini"])
+combobox = ttk.Combobox(root, values=["Entropy", "Gini"])
 combobox.current(0)
 combobox.bind("<<ComboboxSelected>>", on_combobox_change)
 combobox.grid(column=0, padx=5, pady=5, sticky="w")

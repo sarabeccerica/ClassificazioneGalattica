@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split # type: ignore
 
 # Carica il dataset
-df = pd.read_csv('star_classification.csv')
+df = pd.read_csv('star_classification.csv', nrows=1000)
 
 # Sostituisce -9999 con NaN (una riga contiene valori -9999)
 df.replace(-9999, pd.NA, inplace=True)
