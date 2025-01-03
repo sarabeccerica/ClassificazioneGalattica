@@ -14,34 +14,13 @@ from cleaning import bins_i
 from cleaning import bins_z
 from cleaning import bins_redshift
 
-FOLDER_PATH = "C:/Users/matte/OneDrive/Desktop/ClassificazioneGalattica/"
+FOLDER_PATH = "/Apprendimento_QSG/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
-
-def switchPath(filename):
-    input_path = FOLDER_PATH + "Apprendimento_QSG/" + filename
-    temp_path = FOLDER_PATH + "Apprendimento_QSG/" + filename + ".tmp"
-    print("Input Path:", input_path)
-    print("Temp Path:", temp_path)
-    # Apertura dei file di input e temporaneo
-    with open(input_path, 'r') as file, open(temp_path, 'w') as file_temp:
-        # Itera ogni riga del file
-        for line in file:
-            # Controlla se la riga inizia con 'file_output' e, se necessario, la sostituisce
-            if line.startswith('file_output'):
-                line = f"file_output('{FOLDER_PATH}Apprendimento_QSG/albero.pl').\n"
-            file_temp.write(line)
-
-    # Rimuove il file originale e rinomina il file temporaneo
-    os.remove(input_path)
-    os.rename(temp_path, input_path)
 
 def on_combobox_change(event):
     global INDUCTION_FILE
     selected = combobox.get()
-    if selected == "Gini":
-        INDUCTION_FILE = "tree_induction_gini.pl"
-    else:
-        INDUCTION_FILE = "tree_induction_entropy.pl"
+    INDUCTION_FILE = f"tree_induction_{selected.lower()}.pl"
     print(f"Hai selezionato: {INDUCTION_FILE}")
 
 def format_value(value):
@@ -70,16 +49,12 @@ def format_result(result):
     return output
 
 def interroga():
-    switchPath('tree_induction_entropy.pl')
-    switchPath('tree_induction_gini.pl')
     prolog = Prolog()
    
     # Determina i valori inseriti dall'utente
     values = [entry.get() for entry in entry_widgets]
-    path = FOLDER_PATH + 'Apprendimento_QSG/'+ INDUCTION_FILE
-    query_consult = f"consult('{path}')"
-    print(f"Consulting Prolog file: {query_consult}")
-    prolog.query(query_consult)
+    
+    prolog.consult(INDUCTION_FILE)
 
     # Costruisco la query direttamente usando i valori dell'utente
     query = "["

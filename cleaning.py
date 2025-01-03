@@ -64,14 +64,9 @@ def asign_class(value):
         return "galaxy"
 
 # Funzione per creare il file Prolog con le fasce
-def create_prolog_file_with_bins(data, filename, folder, columns):
+def create_prolog_file_with_bins(data, filename, columns):
 
-    # Assicurarsi che la cartella esista
-    os.makedirs(folder, exist_ok=True)
-    
-    filepath = os.path.join(folder, filename)
-
-    with open(filepath, 'w') as f:
+    with open(filename, 'w') as f:
         for index, row in data.iterrows():
             # Assegna le fasce per ogni colonna
             u_bin = assign_bin(row['u'], bins_u)
@@ -99,8 +94,6 @@ def create_prolog_file_with_bins(data, filename, folder, columns):
                 elif column == 'redshift':
                     f.write(f'a({column}, [bin1, bin2, bin3]).\n')
 
-folder_name = "Apprendimento_QSG"
-
-create_prolog_file_with_bins(train_data, 'training_set.pl', folder_name, columns)
-create_prolog_file_with_bins(test_data, 'test_set.pl', folder_name, columns)
-create_prolog_file_with_bins(test_data, 'attributi.pl', folder_name, columns)
+create_prolog_file_with_bins(train_data, 'training_set.pl', columns)
+create_prolog_file_with_bins(test_data, 'test_set.pl', columns)
+create_prolog_file_with_bins(test_data, 'attributi.pl', columns)
