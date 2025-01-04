@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split # type: ignore
 
 # Carica il dataset
-df = pd.read_csv('star_classification.csv', nrows=1000)
+df = pd.read_csv('star_classification.csv')
 
 # Sostituisce -9999 con NaN (una riga contiene valori -9999)
 df.replace(-9999, pd.NA, inplace=True)
@@ -15,9 +15,22 @@ df.dropna(inplace=True)
 columns = ['class', 'u', 'g', 'r', 'i', 'z', 'redshift']
 clean_df = df[columns]
 
-# Suddividi i dati in training e test
-train_data, test_data = train_test_split(clean_df, test_size=0.3)
+min_count = clean_df['class'].value_counts().min()
 
+# Campiona un numero uguale di elementi per ogni classe
+balanced_df = pd.concat([
+    clean_df[clean_df['class'] == 'QSO'].sample(n=min_count, random_state=42),
+    clean_df[clean_df['class'] == 'STAR'].sample(n=min_count, random_state=42),
+    clean_df[clean_df['class'] == 'GALAXY'].sample(n=min_count, random_state=42)
+])
+
+# Suddividi i dati in training e test in modo stratificato
+train_data, test_data = train_test_split(
+    balanced_df,
+    test_size=0.3,
+    stratify=balanced_df['class'],
+    random_state=42
+)
 # Definizione delle fasce per ogni attributo
 bins_u = [(-float('inf'), 13.174746), (13.174747, 15.353262), (15.353263, 17.531778),
           (17.531779, 19.710294), (19.710295, 21.888810), (21.888811, 24.067326),
@@ -51,9 +64,9 @@ bins_redshift = [(-float('inf'), 0.01999), (0.02, 0.49999), (0.5, float('inf'))]
 # Funzione per dividere un valore in fasce
 def assign_bin(value, bins):
     for i, (lower, upper) in enumerate(bins):
-        if lower <= value < upper:
+        if lower <= value <= upper:
             return f"{i + 1}"  # Etichetta della fascia (1-based index)
-    return "Out of range"  # Se il valore non rientra in nessuna fascia
+    return f"Out of range: {value}"  # Se il valore non rientra in nessuna fascia
 
 def asign_class(value):
     if value == "QSO":

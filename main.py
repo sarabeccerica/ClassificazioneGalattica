@@ -4,7 +4,6 @@ from tkinter import ttk
 import tkinter as tk
 import time
 import numpy as np
-
 import pandas as pd
 import os
 from cleaning import assign_bin
@@ -15,6 +14,7 @@ from cleaning import bins_i
 from cleaning import bins_z
 from cleaning import bins_redshift
 
+FOLDER_PATH = "/Apprendimento_QSG/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
 
 def on_combobox_change(event):
@@ -31,7 +31,7 @@ def format_value(value):
         output = "{0}{1}{2}".format(value.args[0], value.name, value.args[1])
     else:
         output = "{}".format(value)
-    return output    
+    return output
 
 def format_result(result):
     result = list(result)
@@ -50,11 +50,18 @@ def format_result(result):
 
 def interroga():
     prolog = Prolog()
-   
+
     # Determina i valori inseriti dall'utente
     values = [entry.get() for entry in entry_widgets]
-    
-    prolog.consult(INDUCTION_FILE)
+    if not os.path.isfile(INDUCTION_FILE):
+        print(f"Errore: Il file Prolog {INDUCTION_FILE} non esiste!")
+        return
+
+    try:
+        prolog.consult(INDUCTION_FILE)
+    except Exception as e:
+        print(f"Errore nel consultare il file Prolog: {e}")
+        return
 
     # Costruisco la query direttamente usando i valori dell'utente
     query = "["
@@ -87,15 +94,31 @@ def interroga():
     for cat in categorie:
         print(f"Inizio l'apprendimento per la classe {cat}")
         tempo_inizio = time.time()
-        answer = prolog.query(f"lancia_apprendi({cat}).")
-        print(format_result(answer))
+        try:
+            answer = list(prolog.query(f"lancia_apprendi({cat})."))
+            if not answer:
+                print("Errore: Nessuna risposta ricevuta dalla query Prolog.")
+
+
+            print(f"Risultati per {cat}: {format_result(answer)}")
+        except Exception as e:
+            print(f"Errore durante l'apprendimento per {cat}: {e}")
+
         tempo_fine = time.time()
         print(f"Tempo totale per {cat}: {tempo_fine - tempo_inizio:.2f} secondi")
 
     print("Classificazione dell'oggetto...")
     tempo_inizio = time.time()
-    answer = prolog.query(f"classifica_oggetto({query}, Classe).")
-    print(format_result(answer))
+    try:
+        answer = list(prolog.query("classifica_oggetto("+query+",Classe)."))
+        if not answer:
+            print("Errore: Nessuna risposta ricevuta dalla query Prolog.")
+            return
+
+        print(f"Risultati per {query} : {format_result(answer)}")
+    except Exception as e:
+        print(f"Errore durante la classificazione di {query}: {e}")
+
     tempo_fine = time.time()
     print(f"Tempo totale di esecuzione: {tempo_fine - tempo_inizio:.2f} secondi")
 
@@ -126,7 +149,7 @@ button.grid(row=len(labels), column=1, pady=10)
 
 label=tk.Label(root, text="Metodo di induzione:", font=("Arial",12))
 label.grid(padx=5, pady=5, sticky="w")
-combobox = ttk.Combobox(root, values=["Entropy", "Gini"])
+combobox = ttk.Combobox(root, values=["Entropia", "Gini"])
 combobox.current(0)
 combobox.bind("<<ComboboxSelected>>", on_combobox_change)
 combobox.grid(column=0, padx=5, pady=5, sticky="w")

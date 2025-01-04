@@ -263,11 +263,11 @@ mostratutto([V:T|C],I) :-
 
 classifica(Oggetto,nc,t(Att,Valori)) :- % dato t(+Att,+Valori), Oggetto e' della Classe
 	member(Att=Val,Oggetto),  % se Att=Val e' elemento della lista Oggetto
-	member(Val:null,Valori). % e Val:null e' in Valori
+        member(Val:null,Valori). % e Val:null e' in Valori
 
 classifica(Oggetto,Classe,t(Att,Valori)) :- % dato t(+Att,+Valori), Oggetto e' della Classe
 	member(Att=Val,Oggetto),  % se Att=Val e' elemento della lista Oggetto
-	member(Val:l(Classe),Valori). % e Val:l(Classe) e' in Valori
+        member(Val:l(Classe),Valori). % e Val:l(Classe) e' in Valori
 
 classifica(Oggetto,Classe,t(Att,Valori)) :-
 	member(Att=Val,Oggetto),  % se Att=Val e' elemento della lista Oggetto
@@ -275,57 +275,61 @@ classifica(Oggetto,Classe,t(Att,Valori)) :-
 	member(Val:t(AttFiglio,ValoriFiglio),Valori),
 	classifica(Resto,Classe,t(AttFiglio,ValoriFiglio)).
 
+
 stampa_matrice_di_confusione :-
 	alb(Albero),
 	findall(Classe/Oggetto,s(Classe,Oggetto),TestSet),
 	length(TestSet,N),
-	valuta(Albero,TestSet,VQ,0,VS,0,VG,0,FQ,0,FS,0,FG,0,NC,0),
-	A is (VQ + VS + VG) / (VQ + VS + VG + FQ + FS + FG), % Accuratezza
-	E is 1 - A,		      % Errore
+	valuta(Albero,TestSet,VN,0,VP,0,FN,0,FP,0,NC,0),
+	A is (VP + VN) / (VP+VN+FP+FN), % Accuratezza
+	E is 1 - A,		   % Errore
+        P is VP / (VP + FN), % Precisione
 	write('Test effettuati :'),  writeln(N),
 	write('Test non classificati :'),  writeln(NC),
-	write('Veri quasar '), write(VQ), write('   Falsi quasar '), writeln(FQ),
-	write('Veri stelle '), write(VS), write('   Falsi stelle '), writeln(FS),
-	write('Veri galassie '), write(VG), write('   Falsi galassie '), writeln(FG),
+	write('Veri negativi  '), write(VN), write('   Falsi positivi '), writeln(FP),
+	write('Falsi negativi '), write(FN), write('   Veri positivi  '), writeln(VP),
 	write('Accuratezza: '), writeln(A),
-	write('Errore: '), writeln(E).
+	write('Errore: '), writeln(E),
+        write('Precisione: '), writeln(P).
 
-valuta(_,[],VQ,VQ,VS,VS,VG,VG,FQ,FQ,FS,FS,FG,FG,NC,NC).            % testset vuoto -> valutazioni finali
 
-valuta(Albero,[qso/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,qso,Albero), !,      % prevede correttamente quasar
-	VQA1 is VQA + 1,
-	valuta(Albero,Coda,VQ,VQA1,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[star/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,star,Albero), !,     % prevede correttamente stelle
-	VSA1 is VSA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA1,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[galaxy/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,galaxy,Albero), !,   % prevede correttamente galassie
-	VGA1 is VGA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA1,FQ,FQA,FS,FSA,FG,FGA,NC,NCA).
+valuta(_,[],VN,VN,VP,VP,FN,FN,FP,FP,NC,NC).            % testset vuoto -> valutazioni finali
 
-valuta(Albero,[qso/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,star,Albero), !,     % prevede erroneamente stelle
-	FQA1 is FQA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA1,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[qso/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,galaxy,Albero), !,   % prevede erroneamente galassie
-	FQA1 is FQA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA1,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[star/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,qso,Albero), !,      % prevede erroneamente quasar
-	FSA1 is FSA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA1,FG,FGA,NC,NCA).
-valuta(Albero,[star/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,galaxy,Albero), !,   % prevede erroneamente galassie
-	FSA1 is FSA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA1,FG,FGA,NC,NCA).
-valuta(Albero,[galaxy/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,qso,Albero), !,      % prevede erroneamente quasar
-	FGA1 is FGA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA1,NC,NCA).
-valuta(Albero,[galaxy/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,star,Albero), !,     % prevede erroneamente stelle
-	FGA1 is FGA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA1,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede correttamente Quasar
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede erroneamente Quasar (con STAR)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede correttamente Star
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con GALAXY)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+
+valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede correttamente Galaxy
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).

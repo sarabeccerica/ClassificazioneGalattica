@@ -4,8 +4,8 @@
 :- op(300, xfx, <==).
 
 % Programma Prolog di apprendimento automatico per la classificazione di
-% infortuni dei giocatori in un campionato di basket.
-% Con il predicato lancia_apprendi(Classe) (Classe = sano/infortunato),
+% stelle, galassie e quasar attraverso la misura delle frequenze.
+% Con il predicato lancia_apprendi(Classe) (Classe = GALAXY, QSO, STAR),
 % viene lanciato l'apprendimento relativo alla classe specificata.
 % Una volta concluso l'apprendimento, con il predicato
 % classifica_oggetto e' possibile far classificare al programma
@@ -15,7 +15,6 @@
 % Con il predicato stampa_matrice_di_confusione e' possibile
 % visualizzare le prestazioni dell'albero indotto.
 
-% Cambiare percorso con quello della propria workspace
 file_output('./albero.pl').
 
 
@@ -25,6 +24,10 @@ lancia_apprendi(Classe) :-
     tell(NomeFile),
     apprendi(Classe),
     told.
+
+
+
+
 
 % Predicato per lanciare la classificazione di un oggetto
 classifica_oggetto(Oggetto,Classe) :-
@@ -52,28 +55,40 @@ apprendi(Classe) :-
 
 % apprendi(Esempi,Classe,Descrizione)
 % Descrizione copre esattamente gli esempi di Classe nella lista Esempi
-apprendi(Esempi,Classe,[]) :-
-    \+ member(e(Classe,_),Esempi). % non ci sono piu' esempi da coprire
-apprendi(Esempi,Classe,[Congie|Congi]) :-
-    apprendi_cong(Esempi,Classe,Congie),
-    rimuovi(Esempi,Congie,RestoEsempi), % rimuove gli esempi utilizzati
-    apprendi(RestoEsempi,Classe,Congi). % copre gli esempi restanti
+apprendi(Esempi, Classe, []) :-
+    write('Esempi disponibili: '), writeln(Esempi), % Debug
+    \+ member(e(Classe, _), Esempi),
+    write('Nessun esempio per la classe: '), writeln(Classe), !.
+
+apprendi(Esempi, Classe, [Congie|Congi]) :-
+    write('Apprendimento in corso per classe: '), writeln(Classe), % Debug
+    apprendi_cong(Esempi, Classe, Congie),
+    write('Congiunzione trovata: '), writeln(Congie), % Debug
+    rimuovi(Esempi, Congie, RestoEsempi),
+    write('Esempi rimanenti: '), writeln(RestoEsempi), % Debug
+    apprendi(RestoEsempi, Classe, Congi).
 
 % apprendi_cong(Esempi,Classe,Cong)
 % Cong e' una lista di coppie attributo-valore soddisfatti da alcuni
 % esempi di Classe e da nessun esempio di un'altra classe
-apprendi_cong(Esempi,Classe,[]) :-
-    \+ (member(e(ClasseX,_),Esempi), % non ci sono esempi di altre classi
-    ClasseX \== Classe),!.
-apprendi_cong(Esempi,Classe,[Cond|Conds]) :-
-    scegli_cond(Esempi,Classe,Cond), % sceglie attributo-valore
-    filtra(Esempi,[Cond],NuoviEsempi), % filtra esempi in base a Cond
-    apprendi_cong(NuoviEsempi,Classe,Conds).
+apprendi_cong(Esempi, Classe, []) :-
+    write('Verifica esempi per congiunzione: '), writeln(Esempi), % Debug
+    \+ (member(e(ClasseX, _), Esempi), ClasseX \== Classe), !.
 
-scegli_cond(Esempi,Classe,AttVal) :-
-    findall(AV/Punti,punti(Esempi,Classe,AV,Punti),AVs),
-    best(AVs,AttVal). % trova tutte le coppie Att-Val degli esempi di Classe
-                      % assegnandogli un punteggio e sceglie quella migliore
+apprendi_cong(Esempi, Classe, [Cond|Conds]) :-
+    write('Selezione condizione per: '), writeln(Classe), % Debug
+    scegli_cond(Esempi, Classe, Cond),
+    write('Condizione scelta: '), writeln(Cond), % Debug
+    filtra(Esempi, [Cond], NuoviEsempi),
+    write('Esempi filtrati: '), writeln(NuoviEsempi), % Debug
+    apprendi_cong(NuoviEsempi, Classe, Conds).
+
+
+scegli_cond(Esempi, Classe, AttVal) :-
+    findall(AV/Punti, punti(Esempi, Classe, AV, Punti), AVs),
+    write('Candidati trovati: '), writeln(AVs), % Debug
+    best(AVs, AttVal),
+    write('Migliore candidato: '), writeln(AttVal). % Debug
 
 punti(Esempi,Classe,AttVal,Punti) :-
     candidato(Esempi,Classe,AttVal), % un attributo-valore adatto
@@ -94,7 +109,7 @@ adatto(AttVal,Esempi,Classe) :-
     \+ soddisfa(OggX,[AttVal]),!. % esempio negativo che non matcha
 
 soddisfa(Oggetto,Congiunzione) :-
-    \+ (member(Att=Valx,Congiunzione), % soddisfa ha successo se non � vero che
+    \+ (member(Att=Valx,Congiunzione), % soddisfa ha successo se non è vero che
         member(Att=Valy,Oggetto),      % esiste all'interno di congiunzione un
         Valx \== Valy).                % valore Valx associato ad Att che sia
                                        % diverso dal valore Valy associato ad Att
@@ -102,7 +117,7 @@ soddisfa(Oggetto,Congiunzione) :-
 
 best([AttVal/_],AttVal).
 best([AV0/S0,AV1/S1|AVSlist],AttVal) :-
-    S1 > S0,!, % AV1 � meglio di AV0
+    S1 > S0,!, % AV1 è meglio di AV0
     best([AV1/S1|AVSlist],AttVal) % if S1 > S0
     ;
     best([AV0/S0|AVSlist],AttVal). % else if S0 > S1
@@ -143,6 +158,7 @@ induce_albero( Albero ) :-
 	mostra( Albero ),
 	assert(alb(Albero)).
 
+
 % induce_albero( +Attributi, +Esempi, -Albero):
 % l'Albero indotto dipende da questi tre casi:
 % (1) Albero = null: l'insieme degli esempi è vuoto
@@ -177,7 +193,7 @@ sceglie_attributo( Attributi, Esempi, MigliorAttributo )  :-
 	      [_/MigliorAttributo|_] ).
 
 % disuguaglianza(+Esempi, +Attributo, -Dis):
-% Dis � la disuguaglianza combinata dei sottoinsiemi degli esempi
+% Dis   la disuguaglianza combinata dei sottoinsiemi degli esempi
 % partizionati dai valori dell'Attributo
 disuguaglianza( Esempi, Attributo, Dis) :-
 	a( Attributo, AttVals),
@@ -264,11 +280,11 @@ mostratutto([V:T|C],I) :-
 
 classifica(Oggetto,nc,t(Att,Valori)) :- % dato t(+Att,+Valori), Oggetto e' della Classe
 	member(Att=Val,Oggetto),  % se Att=Val e' elemento della lista Oggetto
-	member(Val:null,Valori). % e Val:null e' in Valori
+        member(Val:null,Valori). % e Val:null e' in Valori
 
 classifica(Oggetto,Classe,t(Att,Valori)) :- % dato t(+Att,+Valori), Oggetto e' della Classe
 	member(Att=Val,Oggetto),  % se Att=Val e' elemento della lista Oggetto
-	member(Val:l(Classe),Valori). % e Val:l(Classe) e' in Valori
+        member(Val:l(Classe),Valori). % e Val:l(Classe) e' in Valori
 
 classifica(Oggetto,Classe,t(Att,Valori)) :-
 	member(Att=Val,Oggetto),  % se Att=Val e' elemento della lista Oggetto
@@ -276,59 +292,61 @@ classifica(Oggetto,Classe,t(Att,Valori)) :-
 	member(Val:t(AttFiglio,ValoriFiglio),Valori),
 	classifica(Resto,Classe,t(AttFiglio,ValoriFiglio)).
 
+
 stampa_matrice_di_confusione :-
 	alb(Albero),
 	findall(Classe/Oggetto,s(Classe,Oggetto),TestSet),
 	length(TestSet,N),
-	valuta(Albero,TestSet,VQ,0,VS,0,VG,0,FQ,0,FS,0,FG,0,NC,0),
-	A is (VQ + VS + VG) / (VQ + VS + VG + FQ + FS + FG), % Accuratezza
-	E is 1 - A,		      % Errore
+	valuta(Albero,TestSet,VN,0,VP,0,FN,0,FP,0,NC,0),
+	A is (VP + VN) / (VP+VN+FP+FN), % Accuratezza
+	E is 1 - A,		   % Errore
+        P is VP / (VP + FN), % Precisione
 	write('Test effettuati :'),  writeln(N),
 	write('Test non classificati :'),  writeln(NC),
-	write('Veri quasar '), write(VQ), write('   Falsi quasar '), writeln(FQ),
-	write('Veri stelle '), write(VS), write('   Falsi stelle '), writeln(FS),
-	write('Veri galassie '), write(VG), write('   Falsi galassie '), writeln(FG),
+	write('Veri negativi  '), write(VN), write('   Falsi positivi '), writeln(FP),
+	write('Falsi negativi '), write(FN), write('   Veri positivi  '), writeln(VP),
 	write('Accuratezza: '), writeln(A),
-	write('Errore: '), writeln(E).
-
-valuta(_,[],VQ,VQ,VS,VS,VG,VG,FQ,FQ,FS,FS,FG,FG,NC,NC).            % testset vuoto -> valutazioni finali
-
-valuta(Albero,[qso/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,qso,Albero), !,      % prevede correttamente quasar
-	VQA1 is VQA + 1,
-	valuta(Albero,Coda,VQ,VQA1,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[star/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,star,Albero), !,     % prevede correttamente stelle
-	VSA1 is VSA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA1,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[galaxy/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,galaxy,Albero), !,   % prevede correttamente galassie
-	VGA1 is VGA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA1,FQ,FQA,FS,FSA,FG,FGA,NC,NCA).
-
-valuta(Albero,[qso/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,star,Albero), !,     % prevede erroneamente stelle
-	FQA1 is FQA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA1,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[qso/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,galaxy,Albero), !,   % prevede erroneamente galassie
-	FQA1 is FQA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA1,FS,FSA,FG,FGA,NC,NCA).
-valuta(Albero,[star/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,qso,Albero), !,      % prevede erroneamente quasar
-	FSA1 is FSA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA1,FG,FGA,NC,NCA).
-valuta(Albero,[star/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,galaxy,Albero), !,   % prevede erroneamente galassie
-	FSA1 is FSA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA1,FG,FGA,NC,NCA).
-valuta(Albero,[galaxy/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,qso,Albero), !,      % prevede erroneamente quasar
-	FGA1 is FGA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA1,NC,NCA).
-valuta(Albero,[galaxy/Oggetto|Coda],VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA,NC,NCA) :-
-	classifica(Oggetto,star,Albero), !,     % prevede erroneamente stelle
-	FGA1 is FGA + 1,
-	valuta(Albero,Coda,VQ,VQA,VS,VSA,VG,VGA,FQ,FQA,FS,FSA,FG,FGA1,NC,NCA).
+	write('Errore: '), writeln(E),
+        write('Precisione: '), writeln(P).
 
 
+valuta(_,[],VN,VN,VP,VP,FN,FN,FP,FP,NC,NC).            % testset vuoto -> valutazioni finali
+
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede correttamente Quasar
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Quasar (con STAR)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,qso,Albero), !,                 % prevede erroneamente Quasar (con GALAXY)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+
+valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede correttamente Star
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,star,Albero), !,                 % prevede erroneamente Star (con GALAXY)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+
+valuta(Albero,[galaxy/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede correttamente Galaxy
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+valuta(Albero,[qso/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con QSO)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
+ valuta(Albero,[star/Oggetto|Coda],VN,VNA,VP,VPA,FN,FNA,FP,FPA,NC,NCA) :-
+    classifica(Oggetto,galaxy,Albero), !,                 % prevede erroneamente Galaxy (con STAR)
+    VNA1 is VNA + 1,
+	valuta(Albero,Coda,VN,VNA1,VP,VPA,FN,FNA,FP,FPA,NC,NCA).
