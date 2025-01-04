@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import os
 from cleaning import assign_bin
+from cleaning import bins_alpha
+from cleaning import bins_delta
 from cleaning import bins_u
 from cleaning import bins_g
 from cleaning import bins_r
@@ -14,7 +16,6 @@ from cleaning import bins_i
 from cleaning import bins_z
 from cleaning import bins_redshift
 
-FOLDER_PATH = "/Apprendimento_QSG/"
 INDUCTION_FILE = "tree_induction_entropy.pl"
 
 def on_combobox_change(event):
@@ -70,7 +71,11 @@ def interroga():
             user_input = "0"  # Predefinisci un valore per sicurezza
 
         # Determina il tier corrispondente per l'attributo
-        if chiave == "u":
+        if chiave == "alpha":
+            bin = assign_bin(float(user_input), bins_alpha)
+        elif chiave == "delta":
+            bin = assign_bin(float(user_input), bins_delta)
+        elif chiave == "u":
             bin = assign_bin(float(user_input), bins_u)
         elif chiave == "g":
             bin = assign_bin(float(user_input), bins_g)
@@ -96,9 +101,6 @@ def interroga():
         tempo_inizio = time.time()
         try:
             answer = list(prolog.query(f"lancia_apprendi({cat})."))
-            if not answer:
-                print("Errore: Nessuna risposta ricevuta dalla query Prolog.")
-
 
             print(f"Risultati per {cat}: {format_result(answer)}")
         except Exception as e:
@@ -107,6 +109,7 @@ def interroga():
         tempo_fine = time.time()
         print(f"Tempo totale per {cat}: {tempo_fine - tempo_inizio:.2f} secondi")
 
+    print(list(prolog.query("lancia_induzione(Albero).")))
     print("Classificazione dell'oggetto...")
     tempo_inizio = time.time()
     try:
@@ -124,16 +127,18 @@ def interroga():
 
 root = tk.Tk()
 root.title("Apprendimento intelligente QSG")
-labels = ["U", "G", "R", "I", "Z", "Redshift"]
+labels = ["ALPHA","DELTA","U", "G", "R", "I", "Z", "Redshift"]
 
 entry_widgets = []
 
 attributi_dict = {
-    'u': 10,
-    'g': 10,
-    'r': 10,
-    'i': 10,
-    'z': 10,
+    'alpha': 6,
+    'delta': 6,
+    'u': 5,
+    'g': 5,
+    'r': 5,
+    'i': 5,
+    'z': 5,
     'redshift': 3
 }
 
